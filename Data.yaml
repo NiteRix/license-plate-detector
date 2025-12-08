@@ -1,0 +1,6 @@
+names:
+  0: license_plate
+nc: 1
+
+train: dataV2/images/train
+val:   dataV2/images/val
