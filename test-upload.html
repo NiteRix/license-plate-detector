@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Image Upload</title>
+</head>
+<body>
+    <h1>Test Image Upload to Flask API</h1>
+    
+    <input type="file" id="imageInput" accept="image/*">
+    <button onclick="testUpload()">Test Upload</button>
+    <button onclick="testDetection()">Test Detection</button>
+    
+    <div id="results" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+
+    <script>
+        async function testUpload() {
+            const fileInput = document.getElementById('imageInput');
+            const resultsDiv = document.getElementById('results');
+            
+            if (!fileInput.files[0]) {
+                resultsDiv.innerHTML = '<p style="color: red;">Please select an image first</p>';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            console.log('Selected file:', file);
+            
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            try {
+                resultsDiv.innerHTML = '<p>Testing upload...</p>';
+                
+                const response = await fetch('http://127.0.0.1:8080/test-upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultsDiv.innerHTML = `
+                        <h3 style="color: green;">Upload Test Success!</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <h3 style="color: red;">Upload Test Failed</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <h3 style="color: red;">Upload Test Error</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+        
+        async function testDetection() {
+            const fileInput = document.getElementById('imageInput');
+            const resultsDiv = document.getElementById('results');
+            
+            if (!fileInput.files[0]) {
+                resultsDiv.innerHTML = '<p style="color: red;">Please select an image first</p>';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            try {
+                resultsDiv.innerHTML = '<p>Testing detection...</p>';
+                
+                const response = await fetch('http://127.0.0.1:8080/detect', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultsDiv.innerHTML = `
+                        <h3 style="color: green;">Detection Test Success!</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <h3 style="color: red;">Detection Test Failed</h3>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <h3 style="color: red;">Detection Test Error</h3>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
