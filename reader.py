@@ -68,11 +68,10 @@ model = YOLO(MODEL_PATH)
 # Initialize PaddleOCR
 ocr = PaddleOCR(lang='ar',
                 use_textline_orientation=True,
-                # text_det_thresh=0.5,
                 )
 
 # Load an image
-img_path = "test/car1.png"
+img_path = "test/car6.jpg"
 img = cv2.imread(img_path)
 
 # Run detection
@@ -85,13 +84,10 @@ for result in results:
 
         crop = img[y1:y2, x1:x2] # Crop the license plate
 
-
+        crop = cv2.resize(crop, None, fx=2.0, fy=2.0, interpolation=cv2.INTER_CUBIC)  # upscale
 
         # gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
         # gray_bgr = cv2.cvtColor(crop, cv2.COLOR_GRAY2BGR) # grayscale version:
-
-        crop = cv2.resize(crop, None, fx=2.0, fy=2.0, interpolation=cv2.INTER_CUBIC) # upscale
-
         # debug_crop(crop,model_name) # debug crop image data
 
         ocr_result = ocr.predict(crop)  # replace "crop" with "gray" to detect grayscale
