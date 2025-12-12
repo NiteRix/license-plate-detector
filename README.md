@@ -424,34 +424,25 @@ def process_egypt_plate(texts):
 
 #### YOLO Object Detection
 
-- **Model**: Custom trained YOLOv8/11 for license plate detection
+- **Model**: Custom trained YOLOv8 for license plate detection
 - **Input**: RGB images of various resolutions
 - **Output**: Bounding boxes with confidence scores
-- **Performance**: ~77ms inference time on CPU
+- **Performance**: >500ms on CPU
 
 #### OCR Text Recognition
 
 - **Engine**: PaddleOCR with Arabic language support
-- **Preprocessing**: Image cropping and enhancement
+- **Preprocessing**: Image cropping (From YOLO model) and enhancement
 - **Output**: Text strings with confidence scores
-- **Languages**: Arabic and English character recognition
+- **Languages**: Arabic character recognition
 
 ## 📊 Performance Analysis
-
-### Detection Accuracy
-
-| Metric        | Value | Notes                                               |
-| ------------- | ----- | --------------------------------------------------- |
-| **Precision** | 95.2% | True positives / (True positives + False positives) |
-| **Recall**    | 92.8% | True positives / (True positives + False negatives) |
-| **F1-Score**  | 94.0% | Harmonic mean of precision and recall               |
-| **mAP@0.5**   | 93.5% | Mean Average Precision at IoU threshold 0.5         |
 
 ### Processing Performance
 
 | Operation          | Time (ms) | Hardware              |
 | ------------------ | --------- | --------------------- |
-| **Image Upload**   | 50-200    | Network dependent     |
+| **Image Upload**   | N/A       | Network dependent     |
 | **YOLO Inference** | 77.2      | CPU (Intel i7)        |
 | **OCR Processing** | 150-300   | CPU (Intel i7)        |
 | **Total Pipeline** | 300-600   | End-to-end processing |
@@ -538,9 +529,6 @@ When reporting bugs, please include:
 - **Actual Behavior**: What actually happens
 - **Screenshots**: Visual evidence if applicable
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ### Academic Use
 
@@ -564,11 +552,10 @@ For commercial applications, please ensure compliance with:
 
 ## 👨‍🎓 Academic Information
 
-**Course**: Computer Vision and Machine Learning  
-**Institution**: [Your University Name]  
-**Semester**: [Current Semester]  
-**Student**: [Your Name]  
-**Student ID**: [Your ID]  
+**Institution**: Elsewedy University of Technology (SUT)  
+**Semester**: Fall  
+**Students**: [Your Name]  
+**Student IDs**: [Your ID]  
 **Supervisor**: [Professor Name]
 
 ### Project Objectives Met
