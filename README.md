@@ -153,7 +153,7 @@ This project demonstrates the practical application of:
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/platedetect.git
+git clone https://github.com/NiteRix/license-plate-detector.git
 cd platedetect
 ```
 
@@ -443,7 +443,7 @@ def process_egypt_plate(texts):
 | Operation          | Time (ms) | Hardware              |
 | ------------------ | --------- | --------------------- |
 | **Image Upload**   | N/A       | Network dependent     |
-| **YOLO Inference** | 77.2      | CPU (Intel i7)        |
+| **YOLO Inference** | 77.2-90   | CPU (Intel i7)        |
 | **OCR Processing** | 150-300   | CPU (Intel i7)        |
 | **Total Pipeline** | 300-600   | End-to-end processing |
 
@@ -451,7 +451,7 @@ def process_egypt_plate(texts):
 
 | Component   | Minimum        | Recommended     |
 | ----------- | -------------- | --------------- |
-| **RAM**     | 4GB            | 8GB+            |
+| **RAM**     | 4GB            | 8GB             |
 | **CPU**     | Dual-core 2GHz | Quad-core 3GHz+ |
 | **Storage** | 2GB            | 5GB+            |
 | **Network** | 1 Mbps         | 10 Mbps+        |
