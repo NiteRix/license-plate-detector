@@ -61,7 +61,7 @@ def process_egypt_plate(texts):
 model_name = 'Model 4' # for debug purposes
 
 # Load YOLO model
-MODEL_PATH = 'runs/detect/train4/weights/best.pt'
+MODEL_PATH = '../runs/detect/train4/weights/best.pt'
 model = YOLO(MODEL_PATH)
 
 
@@ -71,7 +71,7 @@ ocr = PaddleOCR(lang='ar',
                 )
 
 # Load an image
-img_path = "test/car6.jpg"
+img_path = "../test/car6.jpg"
 img = cv2.imread(img_path)
 
 # Run detection
