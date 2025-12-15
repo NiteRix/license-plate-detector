@@ -1,4 +1,4 @@
-interface PlateDetectionResponse {
+export interface PlateDetectionResponse {
   id: string
   plateNumber: string
   timestamp: string
@@ -7,6 +7,11 @@ interface PlateDetectionResponse {
   letters: string
   numbers: string
   bbox?: number[]
+  // Additional editable fields
+  notes?: string
+  location?: string
+  vehicleType?: string
+  isVerified?: boolean
 }
 
 interface FlaskPlateResponse {
