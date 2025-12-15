@@ -99,6 +99,7 @@ def detect():
 
                 # crop plate
                 crop = image[y1:y2, x1:x2]
+                crop = cv2.resize(crop, None, fx=2.0, fy=2.0, interpolation=cv2.INTER_CUBIC)  # upscale
 
                 # temp save
                 temp_name = f"temp_{uuid.uuid4()}.jpg"
