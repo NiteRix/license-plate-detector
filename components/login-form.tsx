@@ -7,12 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertCircle } from "lucide-react"
-
-// Mock credentials for demo
-const MOCK_USERS = [
-  { email: "user@example.com", password: "password123", name: "John Doe" },
-  { email: "admin@example.com", password: "admin123", name: "Admin User" },
-]
+import { supabase } from "@/lib/supabase"
 
 interface LoginFormProps {
   onLogin: (email: string, name: string) => void
@@ -23,23 +18,44 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isSignUp, setIsSignUp] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
     setIsLoading(true)
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    try {
+      if (isSignUp) {
+        // Sign up
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+        })
 
-    const user = MOCK_USERS.find((u) => u.email === email && u.password === password)
-    if (user) {
-      onLogin(email, user.name)
-    } else {
-      setError("Invalid email or password")
+        if (signUpError) throw signUpError
+
+        if (data.user) {
+          onLogin(email, email.split("@")[0])
+        }
+      } else {
+        // Sign in
+        const { data, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        })
+
+        if (signInError) throw signInError
+
+        if (data.user) {
+          onLogin(email, email.split("@")[0])
+        }
+      }
+    } catch (err: any) {
+      setError(err.message || "Authentication failed")
+    } finally {
+      setIsLoading(false)
     }
-
-    setIsLoading(false)
   }
 
   return (
@@ -58,7 +74,7 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
               <Input
                 id="email"
                 type="email"
-                placeholder="user@example.com"
+                placeholder="your@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -87,14 +103,26 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
             )}
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign In"}
+              {isLoading ? (isSignUp ? "Creating account..." : "Signing in...") : isSignUp ? "Sign Up" : "Sign In"}
             </Button>
           </form>
 
-          <div className="mt-6 space-y-2 rounded-md bg-muted p-4 text-sm text-muted-foreground">
-            <p className="font-semibold">Demo Credentials:</p>
-            <p>Email: user@example.com</p>
-            <p>Password: password123</p>
+          <div className="mt-4 text-center text-sm">
+            <button
+              type="button"
+              onClick={() => {
+                setIsSignUp(!isSignUp)
+                setError("")
+              }}
+              className="text-blue-600 hover:underline"
+            >
+              {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
+            </button>
+          </div>
+
+          <div className="mt-6 rounded-md bg-blue-50 p-4 text-sm text-blue-800">
+            <p className="font-semibold mb-2">Using Supabase Auth</p>
+            <p>Create a new account or sign in with your email and password.</p>
           </div>
         </CardContent>
       </Card>

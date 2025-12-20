@@ -2,6 +2,9 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { ToastProvider } from "@/lib/toast-context"
+import { ToastDisplay } from "@/components/toast-display"
+import { ErrorBoundary } from "@/components/error-boundary"
 import "./globals.css"
 
 // <CHANGE> Added font configuration for Next.js 15
@@ -40,9 +43,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans antialiased`}>
-        {children}
+        <ErrorBoundary>
+          <ToastProvider>
+            {children}
+            <ToastDisplay />
+          </ToastProvider>
+        </ErrorBoundary>
         <Analytics />
       </body>
     </html>
   )
 }
+

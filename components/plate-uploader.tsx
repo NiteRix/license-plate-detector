@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, Camera, Loader2 } from "lucide-react"
 import { detectPlate } from "@/lib/api"
-import { DetectedPlate } from "@/lib/storage"
+import { DetectedPlate } from "@/lib/hybrid-storage"
 
 interface PlateUploaderProps {
   onPlateDetected: (plate: DetectedPlate) => void

@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Label } from "@/components/ui/label"
 import { Edit, Trash2, Download, Upload, CheckCircle } from "lucide-react"
 import { format } from "date-fns"
-import { DetectedPlate } from "@/lib/storage"
+import { DetectedPlate } from "@/lib/hybrid-storage"
 
 interface PlateResultsProps {
   plates: DetectedPlate[]

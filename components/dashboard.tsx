@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LogOut, Trash2 } from "lucide-react"
+import { LogOut, Trash2, Cloud, AlertCircle } from "lucide-react"
 import PlateUploader from "@/components/plate-uploader"
 import PlateResults from "@/components/plate-results"
-import { DetectedPlate, plateStorage } from "@/lib/storage"
+import { DetectedPlate, hybridStorage } from "@/lib/hybrid-storage"
+import { useToast } from "@/lib/toast-context"
+import { ConfirmationModal } from "@/components/confirmation-modal"
 
 interface DashboardProps {
   user: { email: string; name: string } | null
@@ -15,33 +17,94 @@ interface DashboardProps {
 
 export default function Dashboard({ user, onLogout }: DashboardProps) {
   const [plates, setPlates] = useState<DetectedPlate[]>([])
+  const [isSyncing, setIsSyncing] = useState(false)
+  const [syncError, setSyncError] = useState<string | null>(null)
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ isOpen: boolean; plateId: string | null }>({
+    isOpen: false,
+    plateId: null,
+  })
+  const [clearAllConfirmation, setClearAllConfirmation] = useState(false)
+  const { addToast } = useToast()
 
-  // Load plates from localStorage on component mount
+  // Load plates from localStorage on component mount and sync from Supabase
   useEffect(() => {
-    const storedPlates = plateStorage.getPlates()
-    setPlates(storedPlates)
-  }, [])
+    const loadPlates = async () => {
+      try {
+        const storedPlates = hybridStorage.getPlates()
+        setPlates(storedPlates)
+
+        // Try to sync from Supabase
+        try {
+          setIsSyncing(true)
+          const syncedPlates = await hybridStorage.syncFromSupabase()
+          setPlates(syncedPlates)
+          setSyncError(null)
+        } catch (error) {
+          console.error('Sync error:', error)
+          setSyncError('Failed to sync with cloud storage')
+        } finally {
+          setIsSyncing(false)
+        }
+      } catch (error) {
+        console.error('Error loading plates:', error)
+        addToast('Failed to load plates', 'error')
+      }
+    }
+
+    loadPlates()
+  }, [addToast])
 
   const handlePlateDetected = (plate: DetectedPlate) => {
-    const updatedPlates = plateStorage.addPlate(plate)
-    setPlates(updatedPlates)
+    try {
+      const updatedPlates = hybridStorage.addPlate(plate)
+      setPlates(updatedPlates)
+      addToast('Plate detected successfully', 'success')
+    } catch (error: any) {
+      addToast(error.message || 'Failed to save plate', 'error')
+    }
   }
 
   const handleUpdatePlate = (plateId: string, updates: Partial<DetectedPlate>) => {
-    const updatedPlates = plateStorage.updatePlate(plateId, updates)
-    setPlates(updatedPlates)
+    try {
+      const updatedPlates = hybridStorage.updatePlate(plateId, updates)
+      setPlates(updatedPlates)
+      addToast('Plate updated successfully', 'success')
+    } catch (error: any) {
+      addToast(error.message || 'Failed to update plate', 'error')
+    }
   }
 
   const handleDeletePlate = (plateId: string) => {
-    if (confirm('Are you sure you want to delete this plate?')) {
-      const updatedPlates = plateStorage.deletePlate(plateId)
+    setDeleteConfirmation({ isOpen: true, plateId })
+  }
+
+  const confirmDeletePlate = async () => {
+    if (!deleteConfirmation.plateId) return
+
+    try {
+      const updatedPlates = hybridStorage.deletePlate(deleteConfirmation.plateId)
       setPlates(updatedPlates)
+      addToast('Plate deleted successfully', 'success')
+
+      // Sync deletion to Supabase in background
+      try {
+        await hybridStorage.deletePlateFromSupabase(deleteConfirmation.plateId)
+      } catch (error) {
+        console.error('Failed to sync deletion to Supabase:', error)
+        addToast('Plate deleted locally but sync failed', 'warning')
+      }
+    } catch (error: any) {
+      console.error('Error deleting plate:', error)
+      addToast(error.message || 'Failed to delete plate', 'error')
+      throw error
+    } finally {
+      setDeleteConfirmation({ isOpen: false, plateId: null })
     }
   }
 
   const handleExportPlates = () => {
     try {
-      const jsonData = plateStorage.exportPlates()
+      const jsonData = hybridStorage.exportPlates()
       const blob = new Blob([jsonData], { type: 'application/json' })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -51,25 +114,44 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       a.click()
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
-    } catch (error) {
-      alert('Error exporting plates')
+      addToast('Plates exported successfully', 'success')
+    } catch (error: any) {
+      addToast(error.message || 'Error exporting plates', 'error')
     }
   }
 
   const handleImportPlates = (jsonData: string) => {
     try {
-      const importedPlates = plateStorage.importPlates(jsonData)
+      const importedPlates = hybridStorage.importPlates(jsonData)
       setPlates(importedPlates)
-      alert(`Successfully imported ${importedPlates.length} plates`)
-    } catch (error) {
-      alert('Error importing plates: Invalid file format')
+      addToast(`Successfully imported ${importedPlates.length} plates`, 'success')
+    } catch (error: any) {
+      addToast(error.message || 'Error importing plates: Invalid file format', 'error')
     }
   }
 
   const handleClearAllPlates = () => {
-    if (confirm('Are you sure you want to delete all plates? This action cannot be undone.')) {
-      plateStorage.clearAllPlates()
+    setClearAllConfirmation(true)
+  }
+
+  const confirmClearAllPlates = async () => {
+    try {
+      hybridStorage.clearAllPlates()
       setPlates([])
+      addToast('All plates cleared successfully', 'success')
+
+      // Clear from Supabase in background
+      try {
+        await hybridStorage.clearAllPlatesFromSupabase()
+      } catch (error) {
+        console.error('Failed to clear plates from Supabase:', error)
+        addToast('Plates cleared locally but cloud sync failed', 'warning')
+      }
+    } catch (error: any) {
+      addToast(error.message || 'Failed to clear plates', 'error')
+      throw error
+    } finally {
+      setClearAllConfirmation(false)
     }
   }
 
@@ -98,6 +180,16 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
           </div>
         </div>
       </header>
+
+      {/* Sync Status */}
+      {syncError && (
+        <div className="border-b border-yellow-200 bg-yellow-50 px-4 py-3">
+          <div className="mx-auto max-w-7xl flex items-center gap-2 text-sm text-yellow-800">
+            <AlertCircle className="h-4 w-4" />
+            <span>{syncError}</span>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -133,7 +225,17 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
               <CardHeader>
                 <CardTitle className="text-lg">Data Management</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => hybridStorage.syncAllUnsynced()}
+                  disabled={isSyncing}
+                  className="w-full"
+                >
+                  <Cloud className="h-4 w-4 mr-2" />
+                  {isSyncing ? 'Syncing...' : 'Sync to Cloud'}
+                </Button>
                 <Button
                   variant="destructive"
                   size="sm"
@@ -159,6 +261,33 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
           />
         </div>
       </main>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={deleteConfirmation.isOpen}
+        title="Delete Plate"
+        description="Are you sure you want to delete this plate?"
+        message="This action will remove the plate from both local storage and cloud storage. This cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        isDangerous={true}
+        onConfirm={confirmDeletePlate}
+        onCancel={() => setDeleteConfirmation({ isOpen: false, plateId: null })}
+      />
+
+      {/* Clear All Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={clearAllConfirmation}
+        title="Clear All Plates"
+        description="Are you sure you want to delete all plates?"
+        message="This action will permanently delete all plates from both local storage and cloud storage. This cannot be undone."
+        confirmText="Clear All"
+        cancelText="Cancel"
+        isDangerous={true}
+        onConfirm={confirmClearAllPlates}
+        onCancel={() => setClearAllConfirmation(false)}
+      />
     </div>
   )
 }
+

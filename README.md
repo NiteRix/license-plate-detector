@@ -1,19 +1,6 @@
 # 🚗 PlateDetect: Intelligent License Plate Recognition System
 
-## 📋 Table of Contents
 
-- [Project Overview](#project-overview)
-- [Features](#features)
-- [System Architecture](#system-architecture)
-- [Technology Stack](#technology-stack)
-- [Installation & Setup](#installation--setup)
-- [Usage Guide](#usage-guide)
-- [API Documentation](#api-documentation)
-- [Technical Implementation](#technical-implementation)
-- [Performance Analysis](#performance-analysis)
-- [Future Enhancements](#future-enhancements)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## 🎯 Project Overview
 
@@ -33,15 +20,14 @@ This project demonstrates the practical application of:
 - **99%+ Detection Accuracy** on clear license plate images
 - **Real-time Processing** with sub-second response times
 - **Cross-platform Compatibility** (Desktop, Mobile, Tablet)
-- **Multilingual Support** (Arabic and English text recognition)
-- **Persistent Data Management** with local storage and export capabilities
+- **Persistent Data Management** with cloud storage (supabase)
 
 ## ✨ Features
 
 ### 🔍 Core Detection Features
 
 - **Advanced Object Detection**: YOLO-based license plate localization
-- **Optical Character Recognition**: PaddleOCR for Arabic/English text extraction
+- **Optical Character Recognition**: PaddleOCR for Arabic text extraction
 - **Real-time Processing**: Live camera feed and instant image analysis
 - **High Accuracy**: Confidence scoring and verification system
 
@@ -54,7 +40,7 @@ This project demonstrates the practical application of:
 
 ### 💾 Data Management Features
 
-- **Persistent Storage**: Browser-based local storage system
+- **Persistent Storage**: cloud based supabase storage
 - **Editable Records**: Comprehensive plate information editing
 - **Export/Import**: JSON-based data backup and restoration
 - **Statistics Dashboard**: Real-time analytics and insights
@@ -438,14 +424,6 @@ def process_egypt_plate(texts):
 
 ## 📊 Performance Analysis
 
-### Detection Accuracy
-
-| Metric        | Value | Notes                                               |
-| ------------- | ----- | --------------------------------------------------- |
-| **Precision** | 95.2% | True positives / (True positives + False positives) |
-| **Recall**    | 92.8% | True positives / (True positives + False negatives) |
-| **F1-Score**  | 94.0% | Harmonic mean of precision and recall               |
-| **mAP@0.5**   | 93.5% | Mean Average Precision at IoU threshold 0.5         |
 
 ### Processing Performance
 
@@ -456,120 +434,6 @@ def process_egypt_plate(texts):
 | **OCR Processing** | 150-300   | CPU (Intel i7)        |
 | **Total Pipeline** | 300-600   | End-to-end processing |
 
-### System Requirements
-
-| Component   | Minimum        | Recommended     |
-| ----------- | -------------- | --------------- |
-| **RAM**     | 4GB            | 8GB+            |
-| **CPU**     | Dual-core 2GHz | Quad-core 3GHz+ |
-| **Storage** | 2GB            | 5GB+            |
-| **Network** | 1 Mbps         | 10 Mbps+        |
-
-### Browser Compatibility
-
-| Browser           | Version | Support Level |
-| ----------------- | ------- | ------------- |
-| **Chrome**        | 90+     | Full support  |
-| **Firefox**       | 88+     | Full support  |
-| **Safari**        | 14+     | Full support  |
-| **Edge**          | 90+     | Full support  |
-| **Mobile Safari** | 14+     | Full support  |
-| **Chrome Mobile** | 90+     | Full support  |
-
-## 🔮 Future Enhancements
-
-### Short-term Improvements (1-3 months)
-
-- [ ] **Real-time Video Processing**: Live video stream analysis
-- [ ] **Batch Processing**: Multiple image upload and processing
-- [ ] **Advanced Filtering**: Search and filter detection history
-- [ ] **Performance Optimization**: GPU acceleration for faster processing
-- [ ] **Enhanced UI**: Dark mode and accessibility improvements
-
-### Medium-term Features (3-6 months)
-
-- [ ] **Database Integration**: PostgreSQL/MongoDB for scalable storage
-- [ ] **User Authentication**: Multi-user support with role-based access
-- [ ] **API Rate Limiting**: Request throttling and usage analytics
-- [ ] **Advanced Analytics**: Detection trends and statistical analysis
-- [ ] **Mobile App**: Native iOS/Android applications
-
-### Long-term Vision (6-12 months)
-
-- [ ] **Cloud Deployment**: AWS/Azure hosting with auto-scaling
-- [ ] **Machine Learning Pipeline**: Continuous model improvement
-- [ ] **Integration APIs**: Third-party system integrations
-- [ ] **Advanced OCR**: Custom OCR model training for better accuracy
-- [ ] **Multi-language Support**: Support for additional languages and scripts
-
-### Research Opportunities
-
-- [ ] **Edge Computing**: On-device processing for privacy
-- [ ] **Federated Learning**: Distributed model training
-- [ ] **Synthetic Data Generation**: Augmented training datasets
-- [ ] **Real-time Tracking**: Vehicle tracking across multiple cameras
-- [ ] **Blockchain Integration**: Immutable detection records
-
-## 🤝 Contributing
-
-### Development Workflow
-
-1. **Fork Repository**: Create personal fork of the project
-2. **Create Branch**: `git checkout -b feature/your-feature-name`
-3. **Make Changes**: Implement your feature or bug fix
-4. **Test Thoroughly**: Ensure all tests pass and functionality works
-5. **Submit PR**: Create pull request with detailed description
-
-### Code Standards
-
-- **TypeScript**: Strict type checking enabled
-- **ESLint**: Follow configured linting rules
-- **Prettier**: Consistent code formatting
-- **Comments**: Document complex logic and algorithms
-- **Testing**: Unit tests for critical functionality
-
-### Bug Reports
-
-When reporting bugs, please include:
-
-- **Environment**: OS, browser, versions
-- **Steps to Reproduce**: Detailed reproduction steps
-- **Expected Behavior**: What should happen
-- **Actual Behavior**: What actually happens
-- **Screenshots**: Visual evidence if applicable
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-### Academic Use
-
-This project is developed for educational purposes and demonstrates:
-
-- Modern web development practices
-- Computer vision and machine learning integration
-- Full-stack application architecture
-- User experience design principles
-
-### Commercial Use
-
-For commercial applications, please ensure compliance with:
-
-- YOLO model licensing terms
-- PaddleOCR usage policies
-- Third-party library licenses
-- Data privacy regulations
-
----
-
-## 👨‍🎓 Academic Information
-
-**Course**: Computer Vision and Machine Learning  
-**Institution**: [Your University Name]  
-**Semester**: [Current Semester]  
-**Student**: [Your Name]  
-**Student ID**: [Your ID]  
-**Supervisor**: [Professor Name]
 
 ### Project Objectives Met
 
@@ -588,7 +452,3 @@ For commercial applications, please ensure compliance with:
 - **Data Management**: Persistent storage and data manipulation
 - **Mobile Development**: Cross-platform mobile compatibility
 - **Performance Optimization**: System performance analysis and improvement
-
----
-
-_This documentation represents a comprehensive overview of the PlateDetect system, demonstrating advanced technical skills, thorough analysis, and professional development practices suitable for academic evaluation._
