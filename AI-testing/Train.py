@@ -2,7 +2,7 @@ from ultralytics import YOLO
 
 if __name__ == "__main__":
     # Load a small base model — good for starting / real-time use
-    model = YOLO('yolov8n.pt')
+    model = YOLO('../yolov8n.pt')
 
     # Start training
     model.train(

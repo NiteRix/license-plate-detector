@@ -4,8 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a713b50b-a3a0-49b1-a3ab-800882a2d041" name="Changes" comment="updated with Upscaling before OCR">
-      <change beforePath="$PROJECT_DIR$/reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/reader.py" afterDir="false" />
+    <list default="true" id="a713b50b-a3a0-49b1-a3ab-800882a2d041" name="Changes" comment="added upscaling to API">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/AI-testing/Data.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Train.py" beforeDir="false" afterPath="$PROJECT_DIR$/AI-testing/Train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/liveDetection.py" beforeDir="false" afterPath="$PROJECT_DIR$/AI-testing/liveDetection.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/reader.py" beforeDir="false" afterPath="$PROJECT_DIR$/AI-testing/reader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/readerV2.py" beforeDir="false" afterPath="$PROJECT_DIR$/AI-testing/readerV2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/request tester.py" beforeDir="false" afterPath="$PROJECT_DIR$/AI-testing/request tester.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tester.py" beforeDir="false" afterPath="$PROJECT_DIR$/AI-testing/tester.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,41 +63,44 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Flask server.pycharm shinangins.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.Train.executor": "Run",
-    "Python.api.executor": "Run",
-    "Python.liveDetection.executor": "Run",
-    "Python.reader.executor": "Run",
-    "Python.readerV2.executor": "Run",
-    "Python.request tester.executor": "Run",
-    "Python.test.executor": "Run",
-    "Python.tester.executor": "Run",
-    "Python.train_char.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "js.debugger.nextJs.config.created.client": "true",
-    "js.debugger.nextJs.config.created.server": "true",
-    "last_opened_file_path": "E:/pycharm shinangins/runs",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "configurable.group.python.group.settings",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Flask server.pycharm shinangins.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.Train.executor&quot;: &quot;Run&quot;,
+    &quot;Python.api.executor&quot;: &quot;Run&quot;,
+    &quot;Python.liveDetection.executor&quot;: &quot;Run&quot;,
+    &quot;Python.reader.executor&quot;: &quot;Run&quot;,
+    &quot;Python.readerV2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.request tester.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.tester.executor&quot;: &quot;Run&quot;,
+    &quot;Python.train_char.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;js.debugger.nextJs.config.created.client&quot;: &quot;true&quot;,
+    &quot;js.debugger.nextJs.config.created.server&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/pycharm shinangins/runs&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.python.group.settings&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "ChangesTree.GroupingKeys": [
-      "directory",
-      "repository"
+  &quot;keyToStringList&quot;: {
+    &quot;ChangesTree.GroupingKeys&quot;: [
+      &quot;directory&quot;,
+      &quot;repository&quot;
     ]
   }
-}]]></component>
+}</component>
+  <component name="Push.Settings">
+    <option name="SHOW_DETAILS_PANEL" value="false" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\pycharm shinangins\runs" />
@@ -114,7 +124,7 @@
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
@@ -161,7 +171,8 @@
       <workItem from="1765553452788" duration="6951000" />
       <workItem from="1765569370578" duration="2320000" />
       <workItem from="1765571798711" duration="2065000" />
-      <workItem from="1765575833273" duration="505000" />
+      <workItem from="1765575833273" duration="889000" />
+      <workItem from="1765806980556" duration="2141000" />
     </task>
     <task id="LOCAL-00001" summary="uploaded files">
       <option name="closed" value="true" />
@@ -195,7 +206,23 @@
       <option name="project" value="LOCAL" />
       <updated>1765558681568</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Testing with YOLO cls model">
+      <option name="closed" value="true" />
+      <created>1765576381637</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1765576381637</updated>
+    </task>
+    <task id="LOCAL-00006" summary="added upscaling to API">
+      <option name="closed" value="true" />
+      <created>1765807404464</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1765807404464</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -215,7 +242,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="uploaded files" />
     <MESSAGE value="updated with Upscaling before OCR" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated with Upscaling before OCR" />
+    <MESSAGE value="Testing with YOLO cls model" />
+    <MESSAGE value="added upscaling to API" />
+    <option name="LAST_COMMIT_MESSAGE" value="added upscaling to API" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/pycharm_shinangins$tester.coverage" NAME="tester Coverage Results" MODIFIED="1764949021067" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -223,9 +252,9 @@
     <SUITE FILE_PATH="coverage/pycharm_shinangins$liveDetection.coverage" NAME="liveDetection Coverage Results" MODIFIED="1765553596455" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pycharm_shinangins$train_char.coverage" NAME="train_char Coverage Results" MODIFIED="1765386117097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/char_model_stuff" />
     <SUITE FILE_PATH="coverage/pycharm_shinangins$test.coverage" NAME="test Coverage Results" MODIFIED="1765385824644" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/char_model_stuff" />
-    <SUITE FILE_PATH="coverage/pycharm_shinangins$reader.coverage" NAME="reader Coverage Results" MODIFIED="1765570728950" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pycharm_shinangins$reader.coverage" NAME="reader Coverage Results" MODIFIED="1765808754453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pycharm_shinangins$api.coverage" NAME="api Coverage Results" MODIFIED="1765204668228" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/pycharm_shinangins$pycharm_shinangins.coverage" NAME="pycharm shinangins Coverage Results" MODIFIED="1765553526372" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/pycharm_shinangins$pycharm_shinangins.coverage" NAME="pycharm shinangins Coverage Results" MODIFIED="1765808087999" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/pycharm_shinangins$readerV2.coverage" NAME="readerV2 Coverage Results" MODIFIED="1765576125531" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/pycharm_shinangins$Train.coverage" NAME="Train Coverage Results" MODIFIED="1764979177537" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>

@@ -2,13 +2,13 @@ from ultralytics import YOLO
 import cv2
 
 # Load YOLO detection model (plates)
-detect_model = YOLO('runs/detect/train4/weights/best.pt')
+detect_model = YOLO('../runs/detect/train4/weights/best.pt')
 
 # Load YOLO classification model (letters/numbers)
-cls_model = YOLO('runs/classify/train2/weights/best.pt')
+cls_model = YOLO('../runs/classify/train2/weights/best.pt')
 
 # Load image
-img = cv2.imread("test/car1.png")
+img = cv2.imread("../test/car1.png")
 
 # Detect plates
 results = detect_model(img)
