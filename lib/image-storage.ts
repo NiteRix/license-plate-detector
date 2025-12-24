@@ -11,14 +11,39 @@ export const imageStorage = {
      */
     async uploadImage(file: File | Blob, userId: string): Promise<string> {
         try {
+            console.log('[ImageStorage] Starting upload...')
+            console.log('[ImageStorage] File type:', file.type)
+            console.log('[ImageStorage] File size:', file.size)
+            console.log('[ImageStorage] User ID:', userId)
+
             if (!file) {
                 throw new Error('No file provided')
             }
 
+            if (file.size === 0) {
+                throw new Error('File is empty')
+            }
+
+            // Check if user is authenticated
+            const { data: { user }, error: authError } = await supabase.auth.getUser()
+            if (authError) {
+                console.error('[ImageStorage] Auth error:', authError)
+                throw new Error(`Authentication error: ${authError.message}`)
+            }
+            if (!user) {
+                throw new Error('User not authenticated. Please sign in first.')
+            }
+            console.log('[ImageStorage] Authenticated user:', user.id)
+
             // Generate a unique filename
             const timestamp = Date.now()
             const random = Math.random().toString(36).substring(2, 8)
-            const filename = `${userId}/${timestamp}-${random}.jpg`
+            const extension = file.type === 'image/png' ? 'png' : 'jpg'
+            const filename = `${userId}/${timestamp}-${random}.${extension}`
+            console.log('[ImageStorage] Uploading to path:', filename)
+
+            // Determine content type
+            const contentType = file.type || 'image/jpeg'
 
             // Upload the file
             const { data, error } = await supabase.storage
@@ -26,20 +51,34 @@ export const imageStorage = {
                 .upload(filename, file, {
                     cacheControl: '3600',
                     upsert: false,
+                    contentType: contentType,
                 })
 
             if (error) {
+                console.error('[ImageStorage] Upload error:', error)
+                console.error('[ImageStorage] Error details:', JSON.stringify(error, null, 2))
+
+                // Provide more helpful error messages
+                if (error.message.includes('row-level security')) {
+                    throw new Error('Storage permission denied. Please check that storage policies are set up correctly in Supabase.')
+                }
+                if (error.message.includes('Bucket not found')) {
+                    throw new Error('Storage bucket "plate-images" not found. Please run the migration SQL.')
+                }
                 throw new Error(`Upload failed: ${error.message}`)
             }
+
+            console.log('[ImageStorage] Upload successful:', data)
 
             // Get the public URL
             const { data: publicUrlData } = supabase.storage
                 .from(BUCKET_NAME)
                 .getPublicUrl(data.path)
 
+            console.log('[ImageStorage] Public URL:', publicUrlData.publicUrl)
             return publicUrlData.publicUrl
         } catch (error) {
-            console.error('Error uploading image:', error)
+            console.error('[ImageStorage] Error uploading image:', error)
             throw error
         }
     },
@@ -50,6 +89,13 @@ export const imageStorage = {
      */
     async deleteImage(imageUrl: string): Promise<void> {
         try {
+            console.log('[ImageStorage] Deleting image:', imageUrl)
+
+            if (!imageUrl) {
+                console.warn('[ImageStorage] No image URL provided')
+                return
+            }
+
             let filePath: string
 
             // Try different URL formats
@@ -67,23 +113,48 @@ export const imageStorage = {
                 }
                 filePath = decodeURIComponent(urlParts[1])
             } else {
-                throw new Error('URL does not contain plate-images path')
+                console.warn('[ImageStorage] URL does not contain plate-images path, skipping delete')
+                return
             }
 
-            console.log('Deleting image from path:', filePath)
+            console.log('[ImageStorage] Deleting from path:', filePath)
 
             const { error } = await supabase.storage
                 .from(BUCKET_NAME)
                 .remove([filePath])
 
             if (error) {
+                console.error('[ImageStorage] Delete error:', error)
                 throw new Error(`Delete failed: ${error.message}`)
             }
 
-            console.log('Image deleted successfully:', filePath)
+            console.log('[ImageStorage] Image deleted successfully:', filePath)
         } catch (error) {
-            console.error('Error deleting image:', error)
+            console.error('[ImageStorage] Error deleting image:', error)
             throw error
+        }
+    },
+
+    /**
+     * Check if storage bucket exists and is accessible
+     */
+    async checkBucketAccess(): Promise<{ exists: boolean; canUpload: boolean; error?: string }> {
+        try {
+            // Check if bucket exists by listing files
+            const { data, error } = await supabase.storage
+                .from(BUCKET_NAME)
+                .list('', { limit: 1 })
+
+            if (error) {
+                if (error.message.includes('Bucket not found')) {
+                    return { exists: false, canUpload: false, error: 'Bucket not found' }
+                }
+                return { exists: true, canUpload: false, error: error.message }
+            }
+
+            return { exists: true, canUpload: true }
+        } catch (error: any) {
+            return { exists: false, canUpload: false, error: error.message }
         }
     },
 
@@ -104,7 +175,7 @@ export const imageStorage = {
 
             return data.signedUrl
         } catch (error) {
-            console.error('Error getting signed URL:', error)
+            console.error('[ImageStorage] Error getting signed URL:', error)
             throw error
         }
     },
@@ -129,7 +200,7 @@ export const imageStorage = {
 
             return data || []
         } catch (error) {
-            console.error('Error listing images:', error)
+            console.error('[ImageStorage] Error listing images:', error)
             throw error
         }
     },

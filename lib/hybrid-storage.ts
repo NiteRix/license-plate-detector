@@ -193,27 +193,53 @@ export const hybridStorage = {
 
     // Supabase sync functions
     async syncPlateToSupabase(plate: DetectedPlate): Promise<void> {
-        if (!isSupabaseConfigured()) return
+        if (!isSupabaseConfigured()) {
+            console.log('[HybridStorage] Supabase not configured, skipping sync')
+            return
+        }
 
         try {
-            const { data: { user } } = await supabase.auth.getUser()
+            console.log('[HybridStorage] Starting sync for plate:', plate.id)
+
+            const { data: { user }, error: authError } = await supabase.auth.getUser()
+            if (authError) {
+                console.error('[HybridStorage] Auth error:', authError)
+                throw new Error(`Authentication error: ${authError.message}`)
+            }
             if (!user) {
-                console.warn('User not authenticated, skipping Supabase sync')
+                console.warn('[HybridStorage] User not authenticated, skipping Supabase sync')
                 return
             }
+
+            console.log('[HybridStorage] User authenticated:', user.id)
 
             let imageUrl = plate.imageUrl
             let imageStoragePath = plate.imageStoragePath
 
             // Upload image to Supabase Storage if it's a local blob URL
-            if (imageUrl.startsWith('blob:') && !imageStoragePath) {
+            if (imageUrl && imageUrl.startsWith('blob:') && !imageStoragePath) {
+                console.log('[HybridStorage] Uploading blob image to storage...')
                 try {
+                    // Fetch the blob
                     const response = await fetch(imageUrl)
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch blob: ${response.status}`)
+                    }
                     const blob = await response.blob()
-                    imageUrl = await imageStorage.uploadImage(blob, user.id)
-                    imageStoragePath = imageUrl
-                } catch (error) {
-                    console.warn('Failed to upload image to storage, using local URL:', error)
+                    console.log('[HybridStorage] Blob fetched, size:', blob.size, 'type:', blob.type)
+
+                    if (blob.size === 0) {
+                        console.warn('[HybridStorage] Blob is empty, skipping image upload')
+                    } else {
+                        // Upload to Supabase Storage
+                        imageUrl = await imageStorage.uploadImage(blob, user.id)
+                        imageStoragePath = imageUrl
+                        console.log('[HybridStorage] Image uploaded successfully:', imageUrl)
+                    }
+                } catch (error: any) {
+                    console.error('[HybridStorage] Failed to upload image to storage:', error)
+                    // Continue with database sync even if image upload fails
+                    // Keep the original blob URL (won't work across devices but at least data is saved)
                 }
             }
 
@@ -233,20 +259,26 @@ export const hybridStorage = {
                 is_verified: plate.isVerified || false,
             }
 
+            console.log('[HybridStorage] Upserting plate data to database...')
             const { error } = await supabase
                 .from('plates')
                 .upsert(plateData, { onConflict: 'id' })
 
-            if (error) throw error
+            if (error) {
+                console.error('[HybridStorage] Database upsert error:', error)
+                throw new Error(`Database error: ${error.message}`)
+            }
+
+            console.log('[HybridStorage] Plate synced successfully')
 
             // Mark as synced in local storage
             const plates = this.getPlates()
             const updatedPlates = plates.map(p =>
-                p.id === plate.id ? { ...p, syncedToSupabase: true, imageStoragePath } : p
+                p.id === plate.id ? { ...p, syncedToSupabase: true, imageStoragePath, imageUrl } : p
             )
             this.savePlates(updatedPlates)
         } catch (error) {
-            console.error('Error syncing plate to Supabase:', error)
+            console.error('[HybridStorage] Error syncing plate to Supabase:', error)
             throw error
         }
     },

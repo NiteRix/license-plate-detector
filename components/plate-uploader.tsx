@@ -37,24 +37,36 @@ export default function PlateUploader({ onPlateDetected }: PlateUploaderProps) {
   const processImage = async (file: File) => {
     setIsLoading(true)
     try {
+      console.log('[PlateUploader] Processing image:', file.name, 'size:', file.size, 'type:', file.type)
+
+      // Validate file
+      if (!file || file.size === 0) {
+        throw new Error('Invalid or empty file')
+      }
+
       // Create preview URL for display
       const previewUrl = URL.createObjectURL(file)
       setPreview(previewUrl)
 
       // Call API to detect plate using the actual File object
+      console.log('[PlateUploader] Calling detectPlate API...')
       const result = await detectPlate(file)
+      console.log('[PlateUploader] Detection result:', result)
+
       onPlateDetected(result)
 
-      // Clean up preview URL
-      URL.revokeObjectURL(previewUrl)
+      // Don't revoke the URL immediately - it's needed for the plate result
+      // The URL will be cleaned up when the component unmounts or a new image is uploaded
       setPreview(null)
-    } catch (error) {
-      console.error("Error processing image:", error)
+    } catch (error: any) {
+      console.error("[PlateUploader] Error processing image:", error)
       // Clean up preview URL on error
       if (preview) {
         URL.revokeObjectURL(preview)
       }
       setPreview(null)
+      // Re-throw to let parent handle the error
+      throw error
     } finally {
       setIsLoading(false)
     }

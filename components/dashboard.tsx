@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { LogOut, Trash2, Cloud, AlertCircle } from "lucide-react"
+import { LogOut, Trash2, Cloud, AlertCircle, Bug } from "lucide-react"
 import PlateUploader from "@/components/plate-uploader"
 import PlateResults from "@/components/plate-results"
 import { DetectedPlate, hybridStorage } from "@/lib/hybrid-storage"
 import { useToast } from "@/lib/toast-context"
 import { ConfirmationModal } from "@/components/confirmation-modal"
+import { quickDiagnose } from "@/lib/debug-utils"
 
 interface DashboardProps {
   user: { email: string; name: string } | null
@@ -244,6 +245,24 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Clear All Data
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    const issues = await quickDiagnose()
+                    issues.forEach(issue => {
+                      if (issue.startsWith('✅')) {
+                        addToast(issue, 'success')
+                      } else {
+                        addToast(issue, 'error', 10000)
+                      }
+                    })
+                  }}
+                  className="w-full"
+                >
+                  <Bug className="h-4 w-4 mr-2" />
+                  Debug Upload
                 </Button>
               </CardContent>
             </Card>
