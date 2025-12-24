@@ -156,9 +156,17 @@ npm run dev
 ### 3. Backend Setup
 
 ```bash
-# Install Python dependencies
-pip install flask flask-cors ultralytics paddleocr opencv-python numpy
+#Make new Enviroment
+python -m venv .venv
+# DO NOT FORGET TO CHANGE INTERPRETER IN THE IDE TO THE NEW ONE!!!!
+#
+#
 
+# Install Python dependencies into venv 
+pip install flask flask-cors ultralytics paddlepaddle paddleocr opencv-python numpy pytest
+
+# Note: all these lib work on CPU not gpu if you want GPU equivelent,
+# download the respective lib versions
 # Start Flask server
 python api.py
 ```
