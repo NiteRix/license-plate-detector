@@ -1,7 +1,5 @@
 # 🚗 PlateDetect: Intelligent License Plate Recognition System
 
-
-
 ## 🎯 Project Overview
 
 **PlateDetect** is an advanced web-based license plate recognition system designed for real-time vehicle identification and management. The system combines state-of-the-art computer vision techniques with modern web technologies to provide accurate, efficient, and user-friendly license plate detection capabilities.
@@ -40,7 +38,8 @@ This project demonstrates the practical application of:
 
 ### 💾 Data Management Features
 
-- **Persistent Storage**: cloud based supabase storage
+- **Hybrid Storage**: Local storage + Supabase cloud sync
+- **Image Cloud Storage**: Images stored in Supabase Storage bucket
 - **Editable Records**: Comprehensive plate information editing
 - **Export/Import**: JSON-based data backup and restoration
 - **Statistics Dashboard**: Real-time analytics and insights
@@ -48,7 +47,9 @@ This project demonstrates the practical application of:
 ### 🔧 Technical Features
 
 - **CORS-enabled API**: Cross-origin resource sharing support
-- **Error Handling**: Comprehensive error management and user feedback
+- **Error Handling**: Toast notifications, confirmation modals, error boundaries
+- **API Timeout & Retry**: 2-minute timeout with automatic retry on failure
+- **Debug Tools**: Built-in diagnostics for troubleshooting uploads
 - **Performance Optimization**: Efficient image processing and caching
 - **Security**: Input validation and secure file handling
 
@@ -61,7 +62,7 @@ This project demonstrates the practical application of:
 ├─────────────────┤    ├─────────────────┤    ├─────────────────┤
 │ • React UI      │    │ • REST API      │    │ • YOLOv8/11     │
 │ • TypeScript    │    │ • Image Proc.   │    │ • PaddleOCR     │
-│ • Local Storage │    │ • CORS Support  │    │ • OpenCV        │
+│ • Supabase SDK  │    │ • CORS Support  │    │ • OpenCV        │
 │ • Camera API    │    │ • Error Handle  │    │ • NumPy         │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
         │                       │                       │
@@ -71,8 +72,10 @@ This project demonstrates the practical application of:
                     │   Data Layer    │
                     ├─────────────────┤
                     │ • localStorage  │
+                    │ • Supabase DB   │
+                    │ • Supabase      │
+                    │   Storage       │
                     │ • JSON Export   │
-                    │ • File System   │
                     └─────────────────┘
 ```
 
@@ -83,8 +86,9 @@ This project demonstrates the practical application of:
 3. **Object Detection**: YOLO model identifies license plate regions
 4. **Text Extraction**: OCR processes detected plate regions
 5. **Post-processing**: Arabic text handling and confidence scoring
-6. **Data Storage**: Results saved to local storage with metadata
-7. **User Interface**: Results displayed with editing capabilities
+6. **Data Storage**: Results saved to local storage and synced to Supabase
+7. **Image Upload**: Images uploaded to Supabase Storage bucket
+8. **User Interface**: Results displayed with editing capabilities
 
 ## 🛠️ Technology Stack
 
@@ -93,9 +97,10 @@ This project demonstrates the practical application of:
 | Technology       | Version | Purpose                      |
 | ---------------- | ------- | ---------------------------- |
 | **Next.js**      | 16.0.7  | React framework with SSR/SSG |
-| **React**        | 18+     | Component-based UI library   |
+| **React**        | 19      | Component-based UI library   |
 | **TypeScript**   | 5+      | Type-safe JavaScript         |
-| **Tailwind CSS** | 3+      | Utility-first CSS framework  |
+| **Tailwind CSS** | 4+      | Utility-first CSS framework  |
+| **Supabase JS**  | Latest  | Supabase client SDK          |
 | **Lucide React** | Latest  | Modern icon library          |
 | **date-fns**     | Latest  | Date manipulation utilities  |
 
@@ -117,6 +122,14 @@ This project demonstrates the practical application of:
 | **PaddleOCR**        | Latest  | Optical character recognition |
 | **PaddlePaddle**     | Latest  | Deep learning framework       |
 
+### Cloud Services
+
+| Service               | Purpose                       |
+| --------------------- | ----------------------------- |
+| **Supabase Auth**     | User authentication           |
+| **Supabase Database** | PostgreSQL plate data storage |
+| **Supabase Storage**  | Image file storage            |
+
 ### Development Tools
 
 | Tool         | Purpose                   |
@@ -135,6 +148,7 @@ This project demonstrates the practical application of:
 - **Python** (v3.8 or higher)
 - **Git** (for version control)
 - **Modern web browser** (Chrome, Firefox, Safari, Edge)
+- **Supabase account** (free tier available)
 
 ### 1. Clone Repository
 
@@ -162,7 +176,7 @@ python -m venv .venv
 #
 #
 
-# Install Python dependencies into venv 
+# Install Python dependencies into venv
 pip install flask flask-cors ultralytics paddlepaddle paddleocr opencv-python numpy pytest
 
 # Note: all these lib work on CPU not gpu if you want GPU equivelent,
@@ -171,15 +185,23 @@ pip install flask flask-cors ultralytics paddlepaddle paddleocr opencv-python nu
 python api.py
 ```
 
-### 4. Environment Configuration
+### 4. Supabase Setup
 
-Create a `.env.local` file in the root directory:
+1. Create a project at [supabase.com](https://supabase.com)
+2. Get your project URL and anon key from Settings → API
+3. Create `.env.local` file:
 
 ```env
-NEXT_PUBLIC_API_URL=http://192.168.1.4:8080
-FLASK_ENV=development
-FLASK_DEBUG=True
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 ```
+
+4. Run SQL migrations in Supabase SQL Editor (in order):
+   - `supabase/migrations/001_create_plates_table.sql` - Creates plates table
+   - `supabase/migrations/002_create_storage_bucket.sql` - Creates image storage bucket
+   - `supabase/migrations/004_storage_policies_sql.sql` - Sets up storage permissions
+
+See `SUPABASE_SETUP.md` for detailed instructions.
 
 ### 5. Model Setup
 
@@ -193,13 +215,15 @@ The system will automatically download required AI models on first run:
 ### 🖥️ Desktop Usage
 
 1. **Access Application**: Navigate to `http://localhost:3000`
-2. **Upload Image**:
+2. **Sign Up/Login**: Create account or sign in with Supabase auth
+3. **Upload Image**:
    - Drag and drop image file
    - Click upload area to select file
    - Use camera button for live capture
-3. **View Results**: Detected plates appear in the results section
-4. **Edit Information**: Click edit button to modify plate details
-5. **Export Data**: Use export button to download detection history
+4. **View Results**: Detected plates appear in the results section
+5. **Edit Information**: Click edit button to modify plate details
+6. **Sync to Cloud**: Click "Sync to Cloud" to backup data
+7. **Export Data**: Use export button to download detection history
 
 ### 📱 Mobile Usage
 
@@ -215,7 +239,8 @@ The system will automatically download required AI models on first run:
 
 - **Export**: Download all detection data as JSON
 - **Import**: Upload previously exported data
-- **Clear**: Remove all stored detection history
+- **Clear**: Remove all stored detection history (with confirmation modal)
+- **Sync**: Manual sync to Supabase cloud
 - **Statistics**: View detection counts and verification status
 
 #### Plate Editing
@@ -226,12 +251,30 @@ The system will automatically download required AI models on first run:
 - **Notes**: Add custom observations or comments
 - **Verification**: Mark plates as manually verified
 
+#### Debug Tools
+
+- **Debug Upload Button**: Diagnose upload issues
+- **Browser Console**: Run `await window.debugUpload()` for full diagnostics
+
 ## 📡 API Documentation
 
 ### Base URL
 
 ```
 http://192.168.1.4:8080
+```
+
+### API Configuration
+
+The frontend API client supports timeout and retry:
+
+```typescript
+const API_CONFIG = {
+  baseUrl: "http://192.168.1.4:8080",
+  timeout: 120000, // 2 minutes timeout
+  maxRetries: 2, // Retry failed requests
+  retryDelay: 1000, // 1 second between retries
+};
 ```
 
 ### Endpoints
@@ -313,6 +356,10 @@ components/
 ├── dashboard.tsx          # Main application dashboard
 ├── plate-uploader.tsx     # Image upload and camera interface
 ├── plate-results.tsx      # Results display and editing
+├── login-form.tsx         # Supabase authentication
+├── confirmation-modal.tsx # Delete confirmation dialogs
+├── toast-display.tsx      # Toast notifications
+├── error-boundary.tsx     # Error handling wrapper
 └── ui/                    # Reusable UI components
     ├── button.tsx
     ├── card.tsx
@@ -320,13 +367,65 @@ components/
     └── ...
 ```
 
+#### Library Structure
+
+```
+lib/
+├── api.ts              # Flask API client with timeout/retry
+├── supabase.ts         # Supabase client configuration
+├── hybrid-storage.ts   # Local + Supabase sync storage
+├── image-storage.ts    # Supabase Storage image uploads
+├── storage.ts          # Legacy local storage
+├── toast-context.tsx   # Toast notification context
+├── debug-utils.ts      # Debug and diagnostic utilities
+└── utils.ts            # General utilities
+```
+
 #### State Management
 
 - **React Hooks**: `useState`, `useEffect` for local state
-- **Local Storage**: Persistent data storage via custom storage utility
+- **Hybrid Storage**: Local storage with Supabase cloud sync
+- **Toast Context**: Global notification system
 - **Type Safety**: Full TypeScript implementation with strict typing
 
 #### Key Features Implementation
+
+**Hybrid Storage System:**
+
+```typescript
+export const hybridStorage = {
+  // Save locally first, sync to Supabase in background
+  addPlate(plate: DetectedPlate): DetectedPlate[] {
+    const newPlates = [plate, ...this.getPlates()];
+    this.savePlates(newPlates);
+    this.syncPlateToSupabase(plate); // Background sync
+    return newPlates;
+  },
+
+  // Merge local and cloud data
+  async syncFromSupabase(): Promise<DetectedPlate[]> {
+    const localPlates = this.getPlates();
+    const cloudPlates = await fetchFromSupabase();
+    return mergePlates(localPlates, cloudPlates);
+  },
+};
+```
+
+**API with Timeout & Retry:**
+
+```typescript
+async function fetchWithRetry(url, options, maxRetries, timeout) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fetchWithTimeout(url, options, timeout);
+    } catch (error) {
+      if (attempt < maxRetries) {
+        await delay(retryDelay);
+      }
+    }
+  }
+}
+```
 
 **Camera Integration:**
 
@@ -338,28 +437,6 @@ const constraints = {
     width: { ideal: 1280, max: 1920 },
     height: { ideal: 720, max: 1080 },
     aspectRatio: { ideal: 16 / 9 },
-  },
-};
-```
-
-**Local Storage Management:**
-
-```typescript
-export const plateStorage = {
-  getPlates(): DetectedPlate[] {
-    /* ... */
-  },
-  savePlates(plates: DetectedPlate[]): void {
-    /* ... */
-  },
-  addPlate(plate: DetectedPlate): DetectedPlate[] {
-    /* ... */
-  },
-  updatePlate(
-    plateId: string,
-    updates: Partial<DetectedPlate>
-  ): DetectedPlate[] {
-    /* ... */
   },
 };
 ```
@@ -432,7 +509,6 @@ def process_egypt_plate(texts):
 
 ## 📊 Performance Analysis
 
-
 ### Processing Performance
 
 | Operation          | Time (ms) | Hardware              |
@@ -442,21 +518,63 @@ def process_egypt_plate(texts):
 | **OCR Processing** | 150-300   | CPU (Intel i7)        |
 | **Total Pipeline** | 300-600   | End-to-end processing |
 
+## 🐛 Troubleshooting
 
-### Project Objectives Met
+### Upload fails with RLS error
+
+Run `supabase/migrations/004_storage_policies_sql.sql` in Supabase SQL Editor.
+
+### Request timeout
+
+Increase timeout in `lib/api.ts`:
+
+```typescript
+import { updateApiConfig } from "@/lib/api";
+updateApiConfig({ timeout: 180000 }); // 3 minutes
+```
+
+### Cannot connect to Flask API
+
+Make sure Flask is running: `python api.py`
+
+### Debug Upload Issues
+
+Click "Debug Upload" button in dashboard or run in browser console:
+
+```javascript
+await window.debugUpload(); // Full diagnostic
+await window.quickDiagnose(); // Quick check
+```
+
+## 📚 Documentation
+
+| Document                     | Description                |
+| ---------------------------- | -------------------------- |
+| `SUPABASE_SETUP.md`          | Full Supabase setup guide  |
+| `IMAGE_STORAGE_SETUP.md`     | Storage bucket setup       |
+| `STORAGE_RLS_SETUP.md`       | Fix RLS policy errors      |
+| `ERROR_HANDLING.md`          | Error handling system docs |
+| `TECHNICAL_SPECIFICATION.md` | Technical specs            |
+| `USER_MANUAL.md`             | User guide                 |
+| `DEVELOPMENT_GUIDE.md`       | Development guide          |
+
+## ✅ Project Objectives Met
 
 ✅ **Technical Proficiency**: Demonstrated advanced programming skills  
 ✅ **Problem Solving**: Addressed real-world license plate recognition challenges  
 ✅ **Innovation**: Integrated multiple cutting-edge technologies  
 ✅ **Documentation**: Comprehensive technical and user documentation  
 ✅ **Testing**: Thorough testing and performance analysis  
-✅ **User Experience**: Intuitive and responsive interface design
+✅ **User Experience**: Intuitive and responsive interface design  
+✅ **Cloud Integration**: Supabase authentication, database, and storage
 
 ### Learning Outcomes Achieved
 
 - **Computer Vision**: Object detection and optical character recognition
 - **Web Development**: Full-stack application development
 - **API Design**: RESTful API architecture and implementation
-- **Data Management**: Persistent storage and data manipulation
+- **Cloud Services**: Supabase integration for auth, database, and storage
+- **Data Management**: Hybrid local + cloud storage system
 - **Mobile Development**: Cross-platform mobile compatibility
-- **Performance Optimization**: System performance analysis and improvement
+- **Error Handling**: Comprehensive error management with user feedback
+- **Performance Optimization**: API timeout, retry logic, and caching
