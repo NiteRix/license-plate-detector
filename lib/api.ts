@@ -26,7 +26,7 @@ interface FlaskPlateResponse {
 
 // Configuration
 const API_CONFIG = {
-  baseUrl: "http://192.168.1.4:8080",
+  baseUrl: "http://127.0.0.1:8080",
   timeout: 120000, // 2 minutes timeout (model can be slow)
   maxRetries: 2,
   retryDelay: 1000, // 1 second between retries
